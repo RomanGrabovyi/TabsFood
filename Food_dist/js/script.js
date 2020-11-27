@@ -34,4 +34,60 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // Timer
+
+
+    const deadline = '2020-11-30';
+
+    function getTimeRemainig(endtime) {
+        const t = Date.parse(endtime) - Date.parse(new Date()), //Різнця між кінцевим часом і теперішнім в мілісекундах
+              days = Math.floor(t / (1000 * 60 * 60 * 24)),
+              hours = Math.floor(t / (1000 * 60 * 60) % 24),
+              minutes = Math.floor((t / 1000 / 60) % 60),
+              seconds = Math.floor(t / 1000) % 60;
+
+
+        return {   // Повертає об"єкт з готовими зниаченнями
+            'total': t,
+            'days' : days,
+            'hours': hours,
+            'minutes' : minutes,
+            'seconds': seconds
+        };
+    }
+
+    function getZero(num) {
+        if(num >= 0 && num < 10) {
+            return `0${num}`;
+        } else {
+            return num;
+        }
+    }
+
+    function setClock(selector, endtime) {  // Встановлюємо таймер
+        const timer = document.querySelector(selector),//В селектор можна записати будь-який таймер
+              days = timer.querySelector('#days'),
+              hours = timer.querySelector('#hours'),
+              minutes = timer.querySelector('#minutes'),
+              seconds = timer.querySelector('#seconds'),
+              timeIntarval = setInterval(updateClock, 1000);// Обновляємо щосекнди
+
+              updateClock();
+
+        function updateClock() {  // Обновляємо таймер
+            const t = getTimeRemainig(endtime);//В т записуємо об"єкт що повертається зі всіма значеннями
+
+            days.innerHTML = getZero(t.days);//Виносимо на сторінку
+            hours.innerHTML = getZero(t.days);
+            minutes.innerHTML = getZero(t.minutes);
+            seconds.innerHTML = getZero(t.seconds);
+
+            if(t.total <= 0) {
+                clearInterval(timeIntarval); // Зупиняємо таймер
+            }
+        }
+    }
+
+    setClock('.timer', deadline);
 });
