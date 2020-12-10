@@ -238,9 +238,12 @@ window.addEventListener('DOMContentLoaded', () => {
             // form.append(statusMessage); //відправляємо на сторінку
             form.insertAdjacentElement('afterend', statusMessage);
 
-            const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
-            request.setRequestHeader('Content-type', 'application/json'); // B FormData цього прписувати не потрібно
+           
+
+
+            // const request = new XMLHttpRequest();
+            // request.open('POST', 'server.php');
+            // request.setRequestHeader('Content-type', 'application/json'); // B FormData цього прписувати не потрібно
             //якщо приймає дані в JSON
             const formData = new FormData(form);
 
@@ -249,21 +252,27 @@ window.addEventListener('DOMContentLoaded', () => {
                 object[key] = value;
             });
             //після того як ортимали обєкт можемо проводити конвертацію JSON 
-            const json = JSON.stringify(object); // перетворює звичайний обєкт в json
+            
 
-            request.send(json);
-
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
-                    showThanksModal(message.success);
-                    form.reset();
-                    setTimeout(() => {
-                        statusMessage.remove()
-                    }, 2000);
-                } else {
-                    showThanksModal(message.error);
-                }
+            fetch('server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(object) // перетворює звичайний обєкт в json
+            })
+            .then(data => data.text())
+            .then(data => {
+                console.log(data);
+                showThanksModal(message.success);
+                
+                statusMessage.remove()                     
+            })
+            .catch(() => {
+                showThanksModal(message.error);
+            })
+            .finally(() => {
+                form.reset();
             });
         });
     }
